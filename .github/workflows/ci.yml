@@ -1,4 +1,4 @@
-name: Sentinel CI
+name: Build Sentinel Document Management API
 
 on:
   push:
@@ -7,11 +7,11 @@ on:
     branches: [main]
 
 jobs:
-  test:
+  security-tests:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out repository
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -26,6 +26,8 @@ jobs:
 
       - name: Run security tests
         env:
-          DATABASE_URL: postgresql+psycopg://test:test@localhost:5432/test
-          SECRET_KEY: ci-only-secret-key-for-testing
-        run: pytest -q
+          SECRET_KEY: ci-test-secret-key-change-before-production
+          DATABASE_URL: sqlite:///./ci.db
+          ACCESS_TOKEN_EXPIRE_MINUTES: "30"
+          PYTHONPATH: .
+        run: python -m pytest -q
